@@ -1,4 +1,0 @@
-name = Ajax Chain Select Sample
-description = "Sample module for showing the use of Ajax Chain Select"
-package = Form Elements
-core = 7.x
