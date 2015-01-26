@@ -1,16 +1,20 @@
 <?php
 
 /**
- * Implements hook_menu
+ * @file
+ * Sample module to illustrate use of ajax_chain_select.
  */
-function acs_sample_menu() {
 
+/**
+ * Implements hook_menu().
+ */
+function ajax_chain_select_sample_menu() {
   $items = array();
-  $items['acs_sample/sample'] = array(
+  $items['ajax_chain_select_sample'] = array(
     'title' => 'Ajax Chain Select Sample',
     'description' => 'sample form for ajax_chain_select',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('acs_sample_sample_form'),
+    'page arguments' => array('ajax_chain_select_sample_sample_form'),
     'access callback' => TRUE,
     'type' => MENU_NORMAL_ITEM,
   );
@@ -18,7 +22,10 @@ function acs_sample_menu() {
   return $items;
 }
 
-function acs_sample_sample_form($form, &$form_state) {
+/**
+ * Sample form to illustrate the use of ajax_chain_select.
+ */
+function ajax_chain_select_sample_sample_form($form, &$form_state) {
   $acs_config = array(
     0 => array(
       '#title' => t("Country"),
@@ -37,9 +44,8 @@ function acs_sample_sample_form($form, &$form_state) {
     ),
     3 => array(
       '#title' => t("Locality"),
-    )
+    ),
   );
-
 
   $form['region'] = array(
     '#type' => 'ac_select',
@@ -47,9 +53,9 @@ function acs_sample_sample_form($form, &$form_state) {
     '#config' => $acs_config,
     '#levels' => 4,
     '#required_levels' => 3,
-    '#data_callback' => 'acs_sample_data_callback', // while defining the function add '_acsdata' as suffix
+    '#bypass_validation' => FALSE,
+    '#data_callback' => 'ajax_chain_select_sample',
   );
-
 
   $form['submit'] = array(
     '#type' => 'submit',
@@ -59,55 +65,73 @@ function acs_sample_sample_form($form, &$form_state) {
   return $form;
 }
 
-function acs_sample_sample_form_submit($form, &$form_state) {
+/**
+ * Sample form submit callback.
+ */
+function ajax_chain_select_sample_sample_form_submit($form, &$form_state) {
   $values = $form_state['values']['region'];
   unset($values['dc']);
   unset($values['dch']);
-  drupal_set_message('The form has been successfully submitted with values: ' . print_r($values, 1));
+  drupal_set_message(t('The form has been successfully submitted with values: <pre>' . print_r($values, 1) . '</pre>'));
 }
 
-function acs_sample_data_callback_acsdata($level = 0, $previous_level_key = 0) {
+/**
+ * Data callback implementation.
+ */
+function ajax_chain_select_sample_acsdata($level = 0, $previous_level_key = 0) {
 
   $data = array();
 
   switch ($level) {
 
     case 0:
-      $data = acs_get_all_countries(); // ideally this should be a function fetching data from db
+      // Ideally this should be a function fetching data from db.
+      $data = ajax_chain_select_sample_get_all_countries();
       break;
 
     case 1:
-      $data = acs_get_states_by_country($previous_level_key); // ideally this should be a function fetching data from db
+      // Ideally this should be a function fetching data from db.
+      $data = ajax_chain_select_sample_get_states_by_country($previous_level_key);
       break;
 
     case 2:
-      $data = acs_get_cities_by_state($previous_level_key); // ideally this should be a function fetching data from db
+      // Ideally this should be a function fetching data from db.
+      $data = ajax_chain_select_sample_get_cities_by_state($previous_level_key);
       break;
 
     case 3:
-      $data = acs_get_locality_by_city($previous_level_key); // ideally this should be a function fetching data from db
+      // Ideally this should be a function fetching data from db.
+      $data = ajax_chain_select_sample_get_locality_by_city($previous_level_key);
       break;
   }
 
   return $data;
 }
 
-function acs_get_all_countries() {
+/**
+ * A function to get all countries.
+ * @return array countries list.
+ */
+function ajax_chain_select_sample_get_all_countries() {
   $data = array(
     1 => 'Pakistan',
-    2 => 'United States'
+    2 => 'United States',
   );
 
   return $data;
 }
 
-function acs_get_states_by_country($country_id) {
+/**
+ * A function to get all states of a given country.
+ * @return array states list.
+ */
+function ajax_chain_select_sample_get_states_by_country($country_id) {
   $states = array();
   $data = array(
     1 => array(
       1 => 'Sindh',
       2 => 'Punjab',
-      3 => 'Balochistan'
+      3 => 'Balochistan',
     ),
     2 => array(
       4 => 'New York',
@@ -122,7 +146,11 @@ function acs_get_states_by_country($country_id) {
   return $states;
 }
 
-function acs_get_cities_by_state($state_id) {
+/**
+ * A function to get all cities of a given state.
+ * @return array cities list.
+ */
+function ajax_chain_select_sample_get_cities_by_state($state_id) {
   $cities = array();
   $data = array(
     1 => array(
@@ -151,7 +179,11 @@ function acs_get_cities_by_state($state_id) {
   return $cities;
 }
 
-function acs_get_locality_by_city($city_id) {
+/**
+ * A function to get all localities of a given city.
+ * @return array localities list.
+ */
+function ajax_chain_select_sample_get_locality_by_city($city_id) {
   $localities = array();
   $data = array(
     1 => array(

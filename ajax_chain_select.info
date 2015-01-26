@@ -2,4 +2,3 @@ name = Ajax Chain Select
 description = "Custom form field comprising chain of dependent select fields that can be plugged into Drupal forms programmatically"
 package = Form Elements
 core = 7.x
-

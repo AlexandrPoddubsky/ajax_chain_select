@@ -1,7 +1,13 @@
 <?php
 
 /**
- * Implements hook_menu
+ * @file
+ * Custom form field for chained select controls.
+ */
+define('ACS_SUFFIX', '_acsdata');
+
+/**
+ * Implements hook_menu().
  */
 function ajax_chain_select_menu() {
   $items = array();
@@ -16,7 +22,7 @@ function ajax_chain_select_menu() {
 }
 
 /**
- * Implements hook_element_info
+ * Implements hook_element_info().
  */
 function ajax_chain_select_element_info() {
   $elements['ac_select'] = array(
@@ -26,6 +32,9 @@ function ajax_chain_select_element_info() {
   return $elements;
 }
 
+/**
+ * Process callback for ac_select.
+ */
 function ajax_chain_select_element_ac_select($element, &$form_state, $form) {
   drupal_add_js(drupal_get_path('module', 'ajax_chain_select') . '/ajax_chain_select.js');
 
@@ -33,19 +42,19 @@ function ajax_chain_select_element_ac_select($element, &$form_state, $form) {
   $config = !empty($element['#config']) ? $element['#config'] : array();
   $levels = !empty($element['#levels']) ? $element['#levels'] : 1;
   $required_levels = !empty($element['#required_levels']) ? $element['#required_levels'] : 0;
-  $data_callback = !empty($element['#data_callback']) ? $element['#data_callback'] : '';
+  $data_callback = !empty($element['#data_callback']) ? $element['#data_callback'] . ACS_SUFFIX : '';
 
   if (!function_exists($data_callback)) {
     return array('#markup' => 'Data callback not defined');
   }
 
-  $is_submitted = (!empty($form_state['input'])); //checking if the form has been sumbitted or not
+  // Checking if the form has been sumbitted or not.
+  $is_submitted = (!empty($form_state['input']));
   $submitted_values = $form_state['values']['region'];
-
 
   $region_element = array(
     '#array_parents' => array(),
-    '#tree' => FALSE
+    '#tree' => FALSE,
   );
 
   $region_element[$element_name] = array(
@@ -54,9 +63,8 @@ function ajax_chain_select_element_ac_select($element, &$form_state, $form) {
     '#title' => !empty($element['#title']) ? $element['#title'] : array(),
     '#array_parents' => array(),
     '#attributes' => array('class' => array('f3region-fieldset')),
-    '#element_validate' => !empty($element['#bypass_validation']) ? array() : array('f3region_validate'),
+    '#element_validate' => array('ajax_chain_select_custom_validate'),
     '#states' => !empty($element['#states']) ? $element['#states'] : array(),
-    '#id' => !empty($element['#unique_id']) ? $element['#unique_id'] : 'edit-region-' . uniqid(),
     '#levels' => $levels,
     '#data_callback' => $data_callback,
   );
@@ -84,9 +92,9 @@ function ajax_chain_select_element_ac_select($element, &$form_state, $form) {
         }
         break;
     }
-    
-    //default value must be part of data of that level, if not, nullify it
-    if(!empty($config[$level]['#default_value']) && !in_array($config[$level]['#default_value'], array_keys($data))){
+
+    // Default value must be part of data of that level, if not, nullify it.
+    if (!empty($config[$level]['#default_value']) && !in_array($config[$level]['#default_value'], array_keys($data))) {
       unset($config[$level]['#default_value']);
     }
 
@@ -103,20 +111,34 @@ function ajax_chain_select_element_ac_select($element, &$form_state, $form) {
     );
 
     if ($level != $levels - 1) {
+      /**
+       * instead of AHAH, we are using direct call to data function, 
+       * this makes the call much lighter and faster as compared to AHAH, 
+       * that submits the complete form data
+       */
       $region_element[$element_name]['level_' . $level]['#attributes']['onchange'] = "f3region_get_element(this, $level)";
     }
   }
 
   $region_element[$element_name]['dc'] = array(
     '#type' => 'textfield',
-    '#value' => base64_encode($data_callback),
-    '#attributes' => array('hidden' => TRUE),
+    '#value' => base64_encode($element['#data_callback']),
+    '#attributes' => array('hidden' => TRUE, 'class' => array('acs-dc')),
+  );
+
+  $region_element[$element_name]['dch'] = array(
+    '#type' => 'textfield',
+    '#value' => drupal_get_token($element['#data_callback']),
+    '#attributes' => array('hidden' => TRUE, 'class' => array('acs-dch')),
   );
 
   return $region_element;
 }
 
-function f3region_validate(&$element, &$form_state, $form) {
+/**
+ * Custom function for ac_select element validate. 
+ */
+function ajax_chain_select_custom_validate(&$element, &$form_state, $form) {
   $values = $form_state['values'];
   $data_callback = $element['#data_callback'];
   $levels = $element['#levels'];
@@ -144,17 +166,20 @@ function f3region_validate(&$element, &$form_state, $form) {
   }
 }
 
-function ajax_chain_select_element_callback($level = 1, $previous_level_key = 0, $dc = null) {
+/**
+ * Callback function for fetching data for next step of ac_select.
+ */
+function ajax_chain_select_element_callback($level = 1, $previous_level_key = 0, $dc = null, $dch = null) {
   $has_data = 0;
   $data_callback = '';
   $options = array();
 
   if (!empty($dc)) {
-    $data_callback = base64_decode($dc);
-  }
-
-  if (function_exists($data_callback)) {
-    $data = $data_callback($level, $previous_level_key);
+    $dc2 = base64_decode($dc);
+    if (drupal_valid_token($dch, $dc2) && function_exists($dc2 . ACS_SUFFIX)) {
+      $data_callback = $dc2 . ACS_SUFFIX;
+      $data = $data_callback($level, $previous_level_key);
+    }
   }
 
   if (!empty($data)) {

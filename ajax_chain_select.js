@@ -5,6 +5,7 @@ function f3region_get_element(el, $previous_level) {
           $nextall = {},
           $nextel = null,
           $dc = null,
+          $dch = null,
           $next_level = $previous_level + 1;
 
   $nextall = $formitem.nextAll();
@@ -22,7 +23,8 @@ function f3region_get_element(el, $previous_level) {
     }
   }
 
-  $dc = jQuery(el).closest('fieldset').find('.form-type-textfield input').val();
+  $dc = jQuery(el).closest('fieldset').find('.form-type-textfield input.acs-dc').val();
+  $dch = jQuery(el).closest('fieldset').find('.form-type-textfield input.acs-dch').val();
 
   if (previous_level_id == "" || isNaN(Number(previous_level_id))) {
     $nextel.addClass('form-disabled').find('select').attr('disabled', 'disabled');
@@ -30,7 +32,7 @@ function f3region_get_element(el, $previous_level) {
       $nextel.find('select').find('option:eq(0)').attr('selected', 'selected');
     }
   } else {
-    jQuery.getJSON(url + $next_level + '/' + previous_level_id + '/' + $dc, function(response) {
+    jQuery.getJSON(url + $next_level + '/' + previous_level_id + '/' + $dc + '/' + $dch, function(response) {
       if (response.has_data == '1') {
         var $temp = $nextel.find('select').find('option:eq(0)');
         $nextel.find('select').html($temp);

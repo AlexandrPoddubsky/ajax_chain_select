@@ -1,0 +1,1 @@
+This module shows a sample of how to use ajax chain select.
