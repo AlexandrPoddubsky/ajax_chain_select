@@ -72,7 +72,9 @@ function ajax_chain_select_sample_sample_form_submit($form, &$form_state) {
   $values = $form_state['values']['region'];
   unset($values['dc']);
   unset($values['dch']);
-  drupal_set_message(t('The form has been successfully submitted with values: <pre>' . print_r($values, 1) . '</pre>'));
+  $submitted_values = print_r($values, 1);
+  $message = 'The form has been successfully submitted with values: <pre>'.$submitted_values.'</pre>';
+  drupal_set_message(t($message));
 }
 
 /**
@@ -110,6 +112,7 @@ function ajax_chain_select_sample_acsdata($level = 0, $previous_level_key = 0) {
 
 /**
  * A function to get all countries.
+ * 
  * @return array countries list.
  */
 function ajax_chain_select_sample_get_all_countries() {
@@ -123,6 +126,7 @@ function ajax_chain_select_sample_get_all_countries() {
 
 /**
  * A function to get all states of a given country.
+ * 
  * @return array states list.
  */
 function ajax_chain_select_sample_get_states_by_country($country_id) {
@@ -136,7 +140,7 @@ function ajax_chain_select_sample_get_states_by_country($country_id) {
     2 => array(
       4 => 'New York',
       5 => 'California',
-    )
+    ),
   );
 
   if (!empty($data[$country_id])) {
@@ -148,6 +152,7 @@ function ajax_chain_select_sample_get_states_by_country($country_id) {
 
 /**
  * A function to get all cities of a given state.
+ * 
  * @return array cities list.
  */
 function ajax_chain_select_sample_get_cities_by_state($state_id) {
@@ -181,6 +186,7 @@ function ajax_chain_select_sample_get_cities_by_state($state_id) {
 
 /**
  * A function to get all localities of a given city.
+ * 
  * @return array localities list.
  */
 function ajax_chain_select_sample_get_locality_by_city($city_id) {
