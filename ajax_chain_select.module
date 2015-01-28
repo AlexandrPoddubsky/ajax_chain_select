@@ -4,6 +4,7 @@
  * @file
  * Custom form field for chained select controls.
  */
+
 define('AJAX_CHAIN_SELECT_SUFFIX', '_acsdata');
 
 /**
@@ -135,7 +136,7 @@ function ajax_chain_select_element_ac_select($element, &$form_state, $form) {
 }
 
 /**
- * Custom function for ac_select element validate. 
+ * Custom function for ac_select element validate.
  */
 function ajax_chain_select_custom_validate(&$element, &$form_state, $form) {
   $values = $form_state['values'];

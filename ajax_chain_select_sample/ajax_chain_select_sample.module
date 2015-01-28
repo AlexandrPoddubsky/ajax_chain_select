@@ -110,10 +110,10 @@ function ajax_chain_select_sample_acsdata($level = 0, $previous_level_key = 0) {
 }
 
 /**
- * A function to get all countries. 
+ * A function to get all countries.
  *
  * @return
- * array countries list.
+ *   Array countries list.
  */
 function ajax_chain_select_sample_get_all_countries() {
   $data = array(
@@ -128,7 +128,7 @@ function ajax_chain_select_sample_get_all_countries() {
  * A function to get all states of a given country.
  *
  * @return
- * array states list.
+ *   Array states list.
  */
 function ajax_chain_select_sample_get_states_by_country($country_id) {
   $states = array();
@@ -155,7 +155,7 @@ function ajax_chain_select_sample_get_states_by_country($country_id) {
  * A function to get all cities of a given state.
  *
  * @return
- * array cities list.
+ *   Array cities list.
  */
 function ajax_chain_select_sample_get_cities_by_state($state_id) {
   $cities = array();
@@ -190,7 +190,7 @@ function ajax_chain_select_sample_get_cities_by_state($state_id) {
  * A function to get all localities of a given city.
  *
  * @return
- * array localities list.
+ *   Array localities list.
  */
 function ajax_chain_select_sample_get_locality_by_city($city_id) {
   $localities = array();

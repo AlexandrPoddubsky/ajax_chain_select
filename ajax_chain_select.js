@@ -1,3 +1,8 @@
+/**
+ * @file 
+ * Javascript code for Ajax Chain Select module.
+ */
+
 function f3region_get_element(el, $previous_level) {
   var previous_level_id = el.value,
           url = Drupal.settings.basePath + 'ajax_chain_select/callback/',
