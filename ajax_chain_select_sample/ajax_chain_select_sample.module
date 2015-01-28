@@ -73,7 +73,7 @@ function ajax_chain_select_sample_sample_form_submit($form, &$form_state) {
   unset($values['dc']);
   unset($values['dch']);
   $submitted_values = print_r($values, 1);
-  drupal_set_message(t('The form has been successfully submitted with values: <pre>' . $submitted_values . '</pre>'));
+  drupal_set_message(t('The form has been successfully submitted with values: <pre>@values</pre>', array('@values' => $submitted_values)));
 }
 
 /**
@@ -112,8 +112,8 @@ function ajax_chain_select_sample_acsdata($level = 0, $previous_level_key = 0) {
 /**
  * A function to get all countries.
  *
- * @return
- *   Array countries list.
+ * @return array
+ *   Array of countries list.
  */
 function ajax_chain_select_sample_get_all_countries() {
   $data = array(
@@ -127,8 +127,8 @@ function ajax_chain_select_sample_get_all_countries() {
 /**
  * A function to get all states of a given country.
  *
- * @return
- *   Array states list.
+ * @return array
+ *   Array of states list.
  */
 function ajax_chain_select_sample_get_states_by_country($country_id) {
   $states = array();
@@ -154,8 +154,8 @@ function ajax_chain_select_sample_get_states_by_country($country_id) {
 /**
  * A function to get all cities of a given state.
  *
- * @return
- *   Array cities list.
+ * @return array
+ *   Array of cities list.
  */
 function ajax_chain_select_sample_get_cities_by_state($state_id) {
   $cities = array();
@@ -189,8 +189,8 @@ function ajax_chain_select_sample_get_cities_by_state($state_id) {
 /**
  * A function to get all localities of a given city.
  *
- * @return
- *   Array localities list.
+ * @return array
+ *   Array of localities list.
  */
 function ajax_chain_select_sample_get_locality_by_city($city_id) {
   $localities = array();

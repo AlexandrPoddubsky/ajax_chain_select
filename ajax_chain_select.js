@@ -1,5 +1,5 @@
 /**
- * @file 
+ * @file
  * Javascript code for Ajax Chain Select module.
  */
 
