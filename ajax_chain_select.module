@@ -107,7 +107,7 @@ function ajax_chain_select_element_ac_select($element, &$form_state, $form) {
       '#validated' => TRUE,
       '#default_value' => !empty($config[$level]['#default_value']) ? $config[$level]['#default_value'] : NULL,
       '#title_display' => !empty($config[$level]['#title_display']) ? $config[$level]['#title_display'] : 'before',
-      '#disabled' => (empty($data)) ? TRUE : FALSE,      
+      '#disabled' => (empty($data)) ? TRUE : FALSE,
     );
 
     if ($level != $levels - 1) {
@@ -115,7 +115,7 @@ function ajax_chain_select_element_ac_select($element, &$form_state, $form) {
        * this makes the call much lighter and faster as compared to AHAH,
        * that submits the complete form data. */
       $region_element[$element_name]['level_' . $level]['#attributes']['onchange'] = "f3region_get_element(this, $level)";
-      $region_element[$element_name]['level_' . $level]['#attributes']['class'] = array('ajax-chain-select-select');      
+      $region_element[$element_name]['level_' . $level]['#attributes']['class'] = array('ajax-chain-select-select');
     }
   }
 

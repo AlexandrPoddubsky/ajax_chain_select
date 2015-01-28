@@ -1,14 +1,3 @@
-//(function ($) {
-//  Drupal.behaviors.AjaxChainSelect = {
-//    attach: function (context) {
-//      // Replace span with a link.
-//      $(".ajax-chain-select-select", context).each(function() {
-//        console.log(this);
-//      })
-//    }
-//  }
-//  })(jQuery);
-
 function f3region_get_element(el, $previous_level) {
   var previous_level_id = el.value,
           url = Drupal.settings.basePath + 'ajax_chain_select/callback/',

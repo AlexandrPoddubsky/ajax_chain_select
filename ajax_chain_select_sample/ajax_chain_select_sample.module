@@ -73,7 +73,7 @@ function ajax_chain_select_sample_sample_form_submit($form, &$form_state) {
   unset($values['dc']);
   unset($values['dch']);
   $submitted_values = print_r($values, 1);
-  $message = 'The form has been successfully submitted with values: <pre>'.$submitted_values.'</pre>';
+  $message = 'The form has been successfully submitted with values: <pre>' . $submitted_values . '</pre>';
   drupal_set_message(t($message));
 }
 
