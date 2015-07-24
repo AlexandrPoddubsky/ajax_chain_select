@@ -20,7 +20,8 @@ function f3region_get_element(el, $previous_level) {
     var $next_ptr = jQuery($nextall[$i]);
     if ($next_ptr.hasClass('form-type-textfield')) {
       continue;
-    } else {
+    }
+    else {
       $next_ptr.addClass('form-disabled').find('select').attr('disabled', 'disabled');
       if ($next_ptr.find('select').find('option') != 'undefined') {
         $next_ptr.find('select').find('option:eq(0)').attr('selected', 'selected');
@@ -36,14 +37,16 @@ function f3region_get_element(el, $previous_level) {
     if ($nextel.find('select').find('option') != 'undefined') {
       $nextel.find('select').find('option:eq(0)').attr('selected', 'selected');
     }
-  } else {
+  }
+  else {
     jQuery.getJSON(url + $next_level + '/' + previous_level_id + '/' + $dc + '/' + $dch, function(response) {
       if (response.has_data == '1') {
         var $temp = $nextel.find('select').find('option:eq(0)');
         $nextel.find('select').html($temp);
         $nextel.find('select').append(response.options);
         $nextel.removeClass('form-disabled').find('select').removeAttr('disabled');
-      } else {
+      }
+      else {
         $nextel.addClass('form-disabled').find('select').attr('disabled', 'disabled');
         if ($nextel.find('select').find('option') != 'undefined') {
           $nextel.find('select').find('option:eq(0)').attr('selected', 'selected');
