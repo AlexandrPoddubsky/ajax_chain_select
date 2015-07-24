@@ -191,12 +191,12 @@ function ajax_chain_select_element_callback($level = 1, $previous_level_key = 0,
 
 /**
  * Generates a token based on $value, and the private key.
- * 
+ *
  * Note: This is similar to drupal_get_token but without using session_id.
  *
  * @param string $value
  *   An additional value to base the token on.
- * 
+ *
  * @return string
  *   A 43-character URL-safe token for validation.
  */
@@ -206,11 +206,11 @@ function ajax_chain_select_get_token($value = '') {
 
 /**
  * Validates a token based on $value and the private key.
- * 
+ *
  * Note: This is similar to drupal_valid_token but without using session_id.
  *
  * @param string $token
- *   The token to be validated. 
+ *   The token to be validated.
  * @param string $value
  *   An additional value to base the token on.
  *
