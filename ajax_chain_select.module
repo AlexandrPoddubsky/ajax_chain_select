@@ -35,13 +35,16 @@ function ajax_chain_select_element_info() {
  * Process callback for ac_select.
  */
 function ajax_chain_select_element_ac_select($element, &$form_state, $form) {
-  drupal_add_js(drupal_get_path('module', 'ajax_chain_select') . '/ajax_chain_select.js');
 
   $element_name = $element['#name'];
   $config = !empty($element['#config']) ? $element['#config'] : array();
   $levels = !empty($element['#levels']) ? $element['#levels'] : 1;
   $required_levels = !empty($element['#required_levels']) ? $element['#required_levels'] : 0;
   $data_callback = !empty($element['#data_callback']) ? $element['#data_callback'] : '';
+  $settings = array(
+    'show_throbber' => isset($element['#show_throbber']) ? $element['#show_throbber'] : TRUE,
+    'progress_message' => isset($element['#progress_message']) ? $element['#progress_message'] : t('Please wait..'),
+  );
 
   if (!function_exists($data_callback)) {
     return array('#markup' => 'Data callback not defined');
@@ -54,18 +57,26 @@ function ajax_chain_select_element_ac_select($element, &$form_state, $form) {
   $region_element = array(
     '#array_parents' => array(),
     '#tree' => FALSE,
+    '#attached' => array(
+      'js' => array(drupal_get_path('module', 'ajax_chain_select') . '/ajax_chain_select.js'),
+    ),
   );
 
   $region_element[$element_name] = array(
     '#type' => 'fieldset',
     '#tree' => TRUE,
+    '#id' => !empty($element['#id']) ? $element['#id'] : drupal_html_id('edit-' . implode('-', $element['#parents'])),
     '#title' => !empty($element['#title']) ? $element['#title'] : array(),
-    '#array_parents' => array(),
-    '#attributes' => array('class' => array('f3region-fieldset')),
+    '#array_parents' => array(),    
     '#element_validate' => array('ajax_chain_select_custom_validate'),
     '#states' => !empty($element['#states']) ? $element['#states'] : array(),
     '#levels' => $levels,
     '#data_callback' => $data_callback,
+  );   
+
+  $region_element[$element_name]['#attached']['js'][] = array(
+    'type' => 'setting',
+    'data' => array('ajax_chain_select' => array($region_element[$element_name]['#id'] => $settings)),
   );
 
   for ($level = 0; $level < $levels; $level++) {
@@ -107,14 +118,11 @@ function ajax_chain_select_element_ac_select($element, &$form_state, $form) {
       '#default_value' => !empty($config[$level]['#default_value']) ? $config[$level]['#default_value'] : NULL,
       '#title_display' => !empty($config[$level]['#title_display']) ? $config[$level]['#title_display'] : 'before',
       '#disabled' => (empty($data)) ? TRUE : FALSE,
-    );
+    );   
 
-    if ($level != $levels - 1) {
-      /* Instead of AHAH, we are using direct call to data function,
-       * this makes the call much lighter and faster as compared to AHAH,
-       * that submits the complete form data. */
-      $region_element[$element_name]['level_' . $level]['#attributes']['onchange'] = "f3region_get_element(this, $level)";
-      $region_element[$element_name]['level_' . $level]['#attributes']['class'] = array('ajax-chain-select-select');
+    if ($level != $levels - 1) {      
+      $region_element[$element_name]['level_' . $level]['#attributes']['level'] = $level;
+      $region_element[$element_name]['level_' . $level]['#attributes']['class'] = array('ajax-chain-select-select', 'ajax-progress-throbber');
     }
   }
 
@@ -168,7 +176,7 @@ function ajax_chain_select_custom_validate(&$element, &$form_state, $form) {
  * Callback function for fetching data for next step of ac_select.
  */
 function ajax_chain_select_element_callback($level = 1, $previous_level_key = 0, $dc = NULL, $dch = NULL) {
-  $has_data = 0;
+  $has_data = '0';
   $data_callback = '';
   $options = array();
 
@@ -181,7 +189,7 @@ function ajax_chain_select_element_callback($level = 1, $previous_level_key = 0,
   }
 
   if (!empty($data)) {
-    $has_data = 1;
+    $has_data = '1';
     foreach ($data as $key => $value) {
       $options .= '<option value="' . $key . '">' . $value . '</option>';
     }

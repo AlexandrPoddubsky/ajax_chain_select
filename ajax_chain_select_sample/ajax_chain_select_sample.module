@@ -52,10 +52,11 @@ function ajax_chain_select_sample_sample_form($form, &$form_state) {
     '#title' => 'Region',
     '#config' => $acs_config,
     '#levels' => 4,
-    '#required_levels' => 3,
-    '#bypass_validation' => FALSE,
-    '#data_callback' => 'ajax_chain_select_sample',
-  );
+    '#required_levels' => 3,    
+    '#show_throbber' => TRUE,
+    '#progress_message' => t('Please wait..'),
+    '#data_callback' => 'ajax_chain_select_sample_fetchdata',
+  );  
 
   $form['submit'] = array(
     '#type' => 'submit',
@@ -79,7 +80,7 @@ function ajax_chain_select_sample_sample_form_submit($form, &$form_state) {
 /**
  * Data callback implementation.
  */
-function ajax_chain_select_sample($level = 0, $previous_level_key = 0) {
+function ajax_chain_select_sample_fetchdata($level = 0, $previous_level_key = 0) {
 
   $data = array();
 
