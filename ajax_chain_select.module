@@ -67,12 +67,12 @@ function ajax_chain_select_element_ac_select($element, &$form_state, $form) {
     '#tree' => TRUE,
     '#id' => !empty($element['#id']) ? $element['#id'] : drupal_html_id('edit-' . implode('-', $element['#parents'])),
     '#title' => !empty($element['#title']) ? $element['#title'] : array(),
-    '#array_parents' => array(),    
+    '#array_parents' => array(),
     '#element_validate' => array('ajax_chain_select_custom_validate'),
     '#states' => !empty($element['#states']) ? $element['#states'] : array(),
     '#levels' => $levels,
     '#data_callback' => $data_callback,
-  );   
+  );
 
   $region_element[$element_name]['#attached']['js'][] = array(
     'type' => 'setting',
@@ -118,9 +118,9 @@ function ajax_chain_select_element_ac_select($element, &$form_state, $form) {
       '#default_value' => !empty($config[$level]['#default_value']) ? $config[$level]['#default_value'] : NULL,
       '#title_display' => !empty($config[$level]['#title_display']) ? $config[$level]['#title_display'] : 'before',
       '#disabled' => (empty($data)) ? TRUE : FALSE,
-    );   
+    );
 
-    if ($level != $levels - 1) {      
+    if ($level != $levels - 1) {
       $region_element[$element_name]['level_' . $level]['#attributes']['level'] = $level;
       $region_element[$element_name]['level_' . $level]['#attributes']['class'] = array('ajax-chain-select-select', 'ajax-progress-throbber');
     }

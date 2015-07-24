@@ -26,7 +26,7 @@
             continue;
           }
           else {
-            //Disabling all next select elements and setting them to their first value.
+            // Disabling all next select elements and setting them to their first value.
             next_ptr.addClass('form-disabled').find('select').attr('disabled', 'disabled');
             if (next_ptr.find('select').find('option') !== undefined) {
               next_ptr.find('select').find('option:eq(0)').attr('selected', 'selected');

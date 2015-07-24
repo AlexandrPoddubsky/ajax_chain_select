@@ -52,11 +52,11 @@ function ajax_chain_select_sample_sample_form($form, &$form_state) {
     '#title' => 'Region',
     '#config' => $acs_config,
     '#levels' => 4,
-    '#required_levels' => 3,    
+    '#required_levels' => 3,
     '#show_throbber' => TRUE,
     '#progress_message' => t('Please wait..'),
     '#data_callback' => 'ajax_chain_select_sample_fetchdata',
-  );  
+  );
 
   $form['submit'] = array(
     '#type' => 'submit',
