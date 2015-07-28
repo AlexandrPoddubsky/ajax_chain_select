@@ -79,7 +79,6 @@ function ajax_chain_select_element_process($element, &$form_state, $form) {
     'data' => array('ajax_chain_select' => array($region_element[$element_name]['#id'] => $settings)),
   );
 
-
   $index = 0;
   $levels_count = count($config);
   $levels = array_keys($config);
@@ -116,15 +115,15 @@ function ajax_chain_select_element_process($element, &$form_state, $form) {
     $region_element[$element_name][$level] = array(
       '#type' => 'select',
       '#options' => $data,
-      '#title' => !empty($level_config['#title']) ? t($level_config['#title']) : '',
+      '#title' => !empty($level_config['#title']) ? $level_config['#title'] : '',
       '#empty_option' => !empty($level_config['#empty_option']) ? $level_config['#empty_option'] : t('- Select -'),
       '#required' => ($index < $required_levels) ? TRUE : FALSE,
       '#validated' => TRUE,
       '#default_value' => !empty($level_config['#default_value']) ? $level_config['#default_value'] : NULL,
       '#title_display' => !empty($level_config['#title_display']) ? $level_config['#title_display'] : 'before',
       '#disabled' => (empty($data)) ? TRUE : FALSE,
-      '#attributes' => array('level' => $level)
-    );    
+      '#attributes' => array('level' => $level),
+    );
 
     if ($index != $levels_count - 1) {
       $region_element[$element_name][$level]['#attributes']['class'] = array('ajax-chain-select-select');
@@ -134,7 +133,7 @@ function ajax_chain_select_element_process($element, &$form_state, $form) {
     $previous_level = $level;
     $previous_level_config = $level_config;
   }
-  
+
   $region_element[$element_name]['dc'] = array(
     '#type' => 'textfield',
     '#value' => base64_encode($element['#data_callback']),

@@ -62,8 +62,10 @@ the select field name and the value array represent its configuration as
 follows:
 
   * #title:: (String) The title of the select field. Default is empty string.
-  * #title_display: (String) The tile display of select field. Default is 'before'.
-  * #empty_option: (String) The empty option to be shown when no value is selected. Default is '- Select -'.
+  * #title_display: (String) The tile display of select field.
+    Default is 'before'.
+  * #empty_option: (String) The empty option to be shown when no value is
+    selected. Default is '- Select -'.
   * #default_value: (Integer) The value for pre-selection. Default is NULL.
 
 E.g:
