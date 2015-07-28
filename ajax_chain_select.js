@@ -9,7 +9,6 @@
       $("select.ajax-chain-select-select", context).change(function() {
         var current_el = this,
                 parent_fieldset = $(current_el).parents('fieldset'),
-                current_level = $(current_el).attr('level'),
                 fieldset_settings = settings['ajax_chain_select'][$(parent_fieldset).attr('id')],
                 current_level_id = this.value,
                 url = Drupal.settings.basePath + 'ajax_chain_select/callback/',
@@ -18,7 +17,7 @@
                 next_el = $(next_all[0]),
                 dc = null,
                 dch = null,
-                next_level = (current_level * 1) + 1;
+                next_level = next_el.find('select').attr('level');
 
         for (var $i = 1; $i < next_all.length; $i++) {
           var next_ptr = $(next_all[$i]);

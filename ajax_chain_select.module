@@ -24,9 +24,9 @@ function ajax_chain_select_menu() {
  * Implements hook_element_info().
  */
 function ajax_chain_select_element_info() {
-  $elements['ac_select'] = array(
+  $elements['ajax_chain_select'] = array(
     "#input" => TRUE,
-    "#process" => array('ajax_chain_select_element_ac_select'),
+    "#process" => array('ajax_chain_select_element_process'),
   );
   return $elements;
 }
@@ -34,11 +34,10 @@ function ajax_chain_select_element_info() {
 /**
  * Process callback for ac_select.
  */
-function ajax_chain_select_element_ac_select($element, &$form_state, $form) {
+function ajax_chain_select_element_process($element, &$form_state, $form) {
 
   $element_name = $element['#name'];
   $config = !empty($element['#config']) ? $element['#config'] : array();
-  $levels = !empty($element['#levels']) ? $element['#levels'] : 1;
   $required_levels = !empty($element['#required_levels']) ? $element['#required_levels'] : 0;
   $data_callback = !empty($element['#data_callback']) ? $element['#data_callback'] : '';
   $settings = array(
@@ -66,11 +65,12 @@ function ajax_chain_select_element_ac_select($element, &$form_state, $form) {
     '#type' => 'fieldset',
     '#tree' => TRUE,
     '#id' => !empty($element['#id']) ? $element['#id'] : drupal_html_id('edit-' . implode('-', $element['#parents'])),
-    '#title' => !empty($element['#title']) ? $element['#title'] : array(),
+    '#title' => !empty($element['#title']) ? $element['#title'] : '',
+    '#title_display' => !empty($element['#title_display']) ? $element['#title_display'] : 'before',
     '#array_parents' => array(),
     '#element_validate' => array('ajax_chain_select_custom_validate'),
     '#states' => !empty($element['#states']) ? $element['#states'] : array(),
-    '#levels' => $levels,
+    '#config' => $config,
     '#data_callback' => $data_callback,
   );
 
@@ -79,53 +79,62 @@ function ajax_chain_select_element_ac_select($element, &$form_state, $form) {
     'data' => array('ajax_chain_select' => array($region_element[$element_name]['#id'] => $settings)),
   );
 
-  for ($level = 0; $level < $levels; $level++) {
 
-    $previous_level = $level - 1;
+  $index = 0;
+  $levels_count = count($config);
+  $levels = array_keys($config);
+  $previous_level = $levels[0];
+  $previous_level_config = $config[$previous_level];
+
+  foreach ($config as $level => $level_config) {
     $data = array();
 
-    switch ($level) {
+    switch ($index) {
       case 0:
         $data = $data_callback($level);
         break;
 
       default:
         if ($is_submitted) {
-          if (!empty($submitted_values['level_' . $previous_level])) {
-            $data = $data_callback($level, $submitted_values['level_' . $previous_level]);
+          if (!empty($submitted_values[$previous_level])) {
+            $data = $data_callback($level, $submitted_values[$previous_level]);
           }
         }
         else {
-          if (!empty($config[$previous_level]['#default_value'])) {
-            $data = $data_callback($level, $config[$previous_level]['#default_value']);
+          if (!empty($previous_level_config['#default_value'])) {
+            $data = $data_callback($level, $previous_level_config['#default_value']);
           }
         }
         break;
     }
 
     // Default value must be part of data of that level, if not, nullify it.
-    if (!empty($config[$level]['#default_value']) && !in_array($config[$level]['#default_value'], array_keys($data))) {
-      unset($config[$level]['#default_value']);
+    if (!empty($level_config['#default_value']) && !in_array($level_config['#default_value'], array_keys($data))) {
+      unset($level_config['#default_value']);
     }
 
-    $region_element[$element_name]['level_' . $level] = array(
+    $region_element[$element_name][$level] = array(
       '#type' => 'select',
       '#options' => $data,
-      '#title' => !empty($config[$level]['#title']) ? $config[$level]['#title'] : 'Level ' . ($level + 1),
-      '#empty_option' => !empty($config[$level]['#empty_option']) ? $config[$level]['#empty_option'] : '- Select -',
-      '#required' => ($level < $required_levels) ? TRUE : FALSE,
+      '#title' => !empty($level_config['#title']) ? t($level_config['#title']) : '',
+      '#empty_option' => !empty($level_config['#empty_option']) ? $level_config['#empty_option'] : t('- Select -'),
+      '#required' => ($index < $required_levels) ? TRUE : FALSE,
       '#validated' => TRUE,
-      '#default_value' => !empty($config[$level]['#default_value']) ? $config[$level]['#default_value'] : NULL,
-      '#title_display' => !empty($config[$level]['#title_display']) ? $config[$level]['#title_display'] : 'before',
+      '#default_value' => !empty($level_config['#default_value']) ? $level_config['#default_value'] : NULL,
+      '#title_display' => !empty($level_config['#title_display']) ? $level_config['#title_display'] : 'before',
       '#disabled' => (empty($data)) ? TRUE : FALSE,
-    );
+      '#attributes' => array('level' => $level)
+    );    
 
-    if ($level != $levels - 1) {
-      $region_element[$element_name]['level_' . $level]['#attributes']['level'] = $level;
-      $region_element[$element_name]['level_' . $level]['#attributes']['class'] = array('ajax-chain-select-select', 'ajax-progress-throbber');
+    if ($index != $levels_count - 1) {
+      $region_element[$element_name][$level]['#attributes']['class'] = array('ajax-chain-select-select');
     }
-  }
 
+    $index++;
+    $previous_level = $level;
+    $previous_level_config = $level_config;
+  }
+  
   $region_element[$element_name]['dc'] = array(
     '#type' => 'textfield',
     '#value' => base64_encode($element['#data_callback']),
@@ -147,28 +156,33 @@ function ajax_chain_select_element_ac_select($element, &$form_state, $form) {
 function ajax_chain_select_custom_validate(&$element, &$form_state, $form) {
   $values = $form_state['values'];
   $data_callback = $element['#data_callback'];
-  $levels = $element['#levels'];
+  $config = $element['#config'];
 
-  for ($level = 0; $level < $levels; $level++) {
+  $index = 0;
+  $levels = array_keys($config);
+  $previous_level = $levels[0];
 
-    $previous_level = $level - 1;
+  foreach ($config as $level => $level_config) {
 
-    if ($level > 0) {
-      $data = $data_callback($level, $values['region']['level_' . $previous_level]);
+    if ($index > 0) {
+      $data = $data_callback($level, $values['region'][$previous_level]);
 
       if (!empty($data)) {
 
-        if (empty($element['level_' . $level]['#options'])) {
-          $element['level_' . $level]['#options'] = $data;
+        if (empty($element[$level]['#options'])) {
+          $element[$level]['#options'] = $data;
         }
-        $element['level_' . $level]['#validated'] = FALSE;
-        _form_validate($element['level_' . $level], $form_state);
+        $element[$level]['#validated'] = FALSE;
+        _form_validate($element[$level], $form_state);
       }
     }
     else {
-      $element['level_' . $level]['#validated'] = FALSE;
-      _form_validate($element['level_' . $level], $form_state);
+      $element[$level]['#validated'] = FALSE;
+      _form_validate($element[$level], $form_state);
     }
+
+    $index++;
+    $previous_level = $level;
   }
 }
 
@@ -178,7 +192,7 @@ function ajax_chain_select_custom_validate(&$element, &$form_state, $form) {
 function ajax_chain_select_element_callback($level = 1, $previous_level_key = 0, $dc = NULL, $dch = NULL) {
   $has_data = '0';
   $data_callback = '';
-  $options = array();
+  $options = '';
 
   if (!empty($dc)) {
     $dc2 = base64_decode($dc);

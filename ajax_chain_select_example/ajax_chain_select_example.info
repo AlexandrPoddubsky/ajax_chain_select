@@ -1,0 +1,5 @@
+name = Ajax Chain Select Example
+description = "Example module for showing the use of Ajax Chain Select"
+package = Form Elements
+core = 7.x
+dependencies[] = ajax_chain_select
