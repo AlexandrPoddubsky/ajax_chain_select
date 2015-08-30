@@ -33,8 +33,8 @@
           }
         }
 
-        dc = $(parent_fieldset).find('.form-type-textfield input.acs-dc').val();
-        dch = $(parent_fieldset).find('.form-type-textfield input.acs-dch').val();
+        dc = $(parent_fieldset).find('input[type=hidden].acs-dc').val();
+        dch = $(parent_fieldset).find('input[type=hidden].acs-dch').val();
 
         if (current_level_id === "") {
           next_el.addClass('form-disabled').find('select').attr('disabled', 'disabled');

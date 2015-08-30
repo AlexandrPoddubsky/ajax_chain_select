@@ -135,15 +135,15 @@ function ajax_chain_select_element_process($element, &$form_state, $form) {
   }
 
   $chain_select_element[$element_name]['dc'] = array(
-    '#type' => 'textfield',
+    '#type' => 'hidden',
     '#value' => base64_encode($element['#data_callback']),
-    '#attributes' => array('hidden' => TRUE, 'class' => array('acs-dc')),
+    '#attributes' => ['class' => ['acs-dc']],
   );
 
   $chain_select_element[$element_name]['dch'] = array(
-    '#type' => 'textfield',
+    '#type' => 'hidden',
     '#value' => ajax_chain_select_get_token($element['#data_callback']),
-    '#attributes' => array('hidden' => TRUE, 'class' => array('acs-dch')),
+    '#attributes' => ['class' => ['acs-dch']],
   );
 
   return $chain_select_element;
