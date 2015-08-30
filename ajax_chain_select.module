@@ -53,7 +53,7 @@ function ajax_chain_select_element_process($element, &$form_state, $form) {
   $is_submitted = (!empty($form_state['input']));
   $submitted_values = $form_state['values']['region'];
 
-  $region_element = array(
+  $chain_select_element = array(
     '#array_parents' => array(),
     '#tree' => FALSE,
     '#attached' => array(
@@ -61,7 +61,7 @@ function ajax_chain_select_element_process($element, &$form_state, $form) {
     ),
   );
 
-  $region_element[$element_name] = array(
+  $chain_select_element[$element_name] = array(
     '#type' => 'fieldset',
     '#tree' => TRUE,
     '#id' => !empty($element['#id']) ? $element['#id'] : drupal_html_id('edit-' . implode('-', $element['#parents'])),
@@ -74,9 +74,9 @@ function ajax_chain_select_element_process($element, &$form_state, $form) {
     '#data_callback' => $data_callback,
   );
 
-  $region_element[$element_name]['#attached']['js'][] = array(
+  $chain_select_element[$element_name]['#attached']['js'][] = array(
     'type' => 'setting',
-    'data' => array('ajax_chain_select' => array($region_element[$element_name]['#id'] => $settings)),
+    'data' => array('ajax_chain_select' => array($chain_select_element[$element_name]['#id'] => $settings)),
   );
 
   $index = 0;
@@ -112,7 +112,7 @@ function ajax_chain_select_element_process($element, &$form_state, $form) {
       unset($level_config['#default_value']);
     }
 
-    $region_element[$element_name][$level] = array(
+    $chain_select_element[$element_name][$level] = array(
       '#type' => 'select',
       '#options' => $data,
       '#title' => !empty($level_config['#title']) ? $level_config['#title'] : '',
@@ -126,7 +126,7 @@ function ajax_chain_select_element_process($element, &$form_state, $form) {
     );
 
     if ($index != $levels_count - 1) {
-      $region_element[$element_name][$level]['#attributes']['class'] = array('ajax-chain-select-select');
+      $chain_select_element[$element_name][$level]['#attributes']['class'] = array('ajax-chain-select-select');
     }
 
     $index++;
@@ -134,19 +134,19 @@ function ajax_chain_select_element_process($element, &$form_state, $form) {
     $previous_level_config = $level_config;
   }
 
-  $region_element[$element_name]['dc'] = array(
+  $chain_select_element[$element_name]['dc'] = array(
     '#type' => 'textfield',
     '#value' => base64_encode($element['#data_callback']),
     '#attributes' => array('hidden' => TRUE, 'class' => array('acs-dc')),
   );
 
-  $region_element[$element_name]['dch'] = array(
+  $chain_select_element[$element_name]['dch'] = array(
     '#type' => 'textfield',
     '#value' => ajax_chain_select_get_token($element['#data_callback']),
     '#attributes' => array('hidden' => TRUE, 'class' => array('acs-dch')),
   );
 
-  return $region_element;
+  return $chain_select_element;
 }
 
 /**
