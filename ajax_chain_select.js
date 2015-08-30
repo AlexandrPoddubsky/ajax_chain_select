@@ -36,7 +36,7 @@
         dc = $(parent_fieldset).find('.form-type-textfield input.acs-dc').val();
         dch = $(parent_fieldset).find('.form-type-textfield input.acs-dch').val();
 
-        if (current_level_id === "" || isNaN(Number(current_level_id))) {
+        if (current_level_id === "") {
           next_el.addClass('form-disabled').find('select').attr('disabled', 'disabled');
           if (next_el.find('select').find('option') !== undefined) {
             next_el.find('select').find('option:eq(0)').attr('selected', 'selected');
