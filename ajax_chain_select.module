@@ -51,7 +51,7 @@ function ajax_chain_select_element_process($element, &$form_state, $form) {
 
   // Checking if the form has been sumbitted or not.
   $is_submitted = (!empty($form_state['input']));
-  $submitted_values = $form_state['values']['region'];
+  $submitted_values = $form_state['values'][$element_name];
 
   $chain_select_element = array(
     '#array_parents' => array(),
@@ -170,7 +170,7 @@ function ajax_chain_select_custom_validate(&$element, &$form_state, $form) {
   foreach ($config as $level => $level_config) {
 
     if ($index > 0) {
-      $data = $data_callback($level, $values['region'][$previous_level]);
+      $data = $data_callback($level, $values[$element_name][$previous_level]);
 
       if (!empty($data)) {
 
